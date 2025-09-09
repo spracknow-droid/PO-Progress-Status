@@ -56,7 +56,7 @@ if uploaded_file is not None:
             filtered_groups_1 = ['자산공통', '고정자산-건설중인자산(캐니스터)']
             df_filtered_1 = df_cleaned[df_cleaned['품목계정그룹'].isin(filtered_groups_1)]
             
-            st.subheader("고정자산 구매 발주 진행 현황 (필터링)")
+            st.subheader("고정자산 구매 발주 진행 현황")
             st.info(f"'{', '.join(filtered_groups_1)}' 그룹에 해당하는 데이터만 표시됩니다.")
             st.dataframe(df_filtered_1, hide_index=True)
 
@@ -81,6 +81,9 @@ if uploaded_file is not None:
                 (df_cleaned['품목계정그룹'].isin(filtered_groups_2)) & 
                 (df_cleaned['장부단가'] >= 1000000)
             ]
+            
+            # 요청에 따라 '발주일', '납기예정일' 컬럼 삭제
+            df_filtered_2 = df_filtered_2.drop(columns=['발주일', '납기예정일'], errors='ignore')
 
             st.subheader("100만원 이상 소모품 구매 현황")
             st.info(f"'{', '.join(filtered_groups_2)}' 그룹 중 장부단가가 100만원 이상인 데이터만 표시됩니다.")
@@ -107,6 +110,9 @@ if uploaded_file is not None:
                 (df_cleaned['품목계정그룹'].isin(filtered_groups_3)) &
                 (df_cleaned['장부단가'] >= 6000000)
             ]
+
+            # 요청에 따라 '발주일', '납기예정일' 컬럼 삭제
+            df_filtered_3 = df_filtered_3.drop(columns=['발주일', '납기예정일'], errors='ignore')
 
             st.subheader("600만원 이상 수선비 현황")
             st.info(f"'{', '.join(filtered_groups_3)}' 그룹 중 장부단가가 600만원 이상인 데이터만 표시됩니다.")
