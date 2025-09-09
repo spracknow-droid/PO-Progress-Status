@@ -72,10 +72,9 @@ if uploaded_file is not None:
                 mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             )
             
-            # 두 번째 필터링: 소모품 및 수선비 + 장부단가 100만원 이상
+            # 두 번째 필터링: 소모품 + 장부단가 100만원 이상
             filtered_groups_2 = [
-                '제조-소모품', '경상개발비-연구소모품', '제조-수선비', '제조-검교정수수료(생산)', 
-                '경상개발비-기타수수료(연구소)', '경상개발비-수선비'
+                '제조-소모품', '경상개발비-연구소모품'
             ]
             
             df_filtered_2 = df_cleaned[
@@ -83,22 +82,47 @@ if uploaded_file is not None:
                 (df_cleaned['장부단가'] >= 1000000)
             ]
 
-            st.subheader("고액 소모품/수선비 구매 현황")
+            st.subheader("100만원 이상 소모품 구매 현황")
             st.info(f"'{', '.join(filtered_groups_2)}' 그룹 중 장부단가가 100만원 이상인 데이터만 표시됩니다.")
             st.dataframe(df_filtered_2, hide_index=True)
             
-            # 고액 소모품/수선비 필터링 데이터 다운로드 버튼
+            # 100만원 이상 소모품 필터링 데이터 다운로드 버튼
             output_2 = io.BytesIO()
             with pd.ExcelWriter(output_2, engine='xlsxwriter') as writer:
                 df_filtered_2.to_excel(writer, index=False, sheet_name='고액_소모품_수선비')
             xlsx_data_2 = output_2.getvalue()
             st.download_button(
-                label="고액 소모품/수선비 데이터 다운로드 (XLSX)",
+                label="100만원 이상 소모품 데이터 다운로드 (XLSX)",
                 data=xlsx_data_2,
-                file_name='고액_소모품_수선비_데이터.xlsx',
+                file_name='100만원_이상_소모품_데이터.xlsx',
                 mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             )
+
+            # 세 번째 필터링: 수선비 + 장부단가 600만원 이상
+            filtered_groups_3 = [
+                '제조-수선비', '제조-검교정수수료(생산)', '경상개발비-수선비'
+            ]
             
+            df_filtered_3 = df_cleaned[
+                (df_cleaned['품목계정그룹'].isin(filtered_groups_3)) &
+                (df_cleaned['장부단가'] >= 6000000)
+            ]
+
+            st.subheader("600만원 이상 수선비 현황")
+            st.info(f"'{', '.join(filtered_groups_3)}' 그룹 중 장부단가가 600만원 이상인 데이터만 표시됩니다.")
+            st.dataframe(df_filtered_3, hide_index=True)
+
+            # 600만원 이상 수선비 필터링 데이터 다운로드 버튼
+            output_3 = io.BytesIO()
+            with pd.ExcelWriter(output_3, engine='xlsxwriter') as writer:
+                df_filtered_3.to_excel(writer, index=False, sheet_name='고액_수선비')
+            xlsx_data_3 = output_3.getvalue()
+            st.download_button(
+                label="600만원 이상 수선비 데이터 다운로드 (XLSX)",
+                data=xlsx_data_3,
+                file_name='600만원_이상_수선비_데이터.xlsx',
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
         else:
             st.warning("데이터에 '품목계정그룹' 또는 '장부단가' 컬럼이 없어 필터링을 적용할 수 없습니다.")
             st.subheader("정제 데이터프레임")
