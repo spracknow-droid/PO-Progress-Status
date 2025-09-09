@@ -1,0 +1,4 @@
+﻿streamlit
+streamlit-plotly-events
+openpyxl
+xlsxwriter
